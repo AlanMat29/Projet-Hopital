@@ -91,7 +91,7 @@ public class Test {
 	public static void menuSecretaire() {
 
 		System.out.println("Menu secretaire");
-		System.out.println("1 - Ajouter un patient à file d'attente");
+		System.out.println("1 - Ajouter un patient ï¿½ file d'attente");
 		System.out.println("2 - Afficher la file d'attente");
 		System.out.println("3 - Partir en pause");
 
