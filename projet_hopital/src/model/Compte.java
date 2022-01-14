@@ -5,14 +5,22 @@ public class Compte {
 	private Integer id;
 	private String login;
 	private String password;
-	
-	
+
+
 	public Compte(Integer id,String login,String password) {
-	
-	this.id=id;
-	this.login=login;
-	this.password=password;
-	 }
+
+		this.id=id;
+		this.login=login;
+		this.password=password;
+	}
+
+	public Compte(String login,String password) {
+
+		this.login=login;
+		this.password=password;
+	}
+
+
 
 	public Integer getId() {
 		return id;
@@ -40,8 +48,8 @@ public class Compte {
 
 
 
-	
-	
+
+
 }
 
 
