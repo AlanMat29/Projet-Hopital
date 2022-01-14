@@ -36,7 +36,7 @@ public class DAOCompte implements IDAO<Compte,Integer>{
 
 				if(rs.getString("type_compte").equals("Medecin")) 
 				{
-					c=new Medecin((Integer)rs.getInt("id"), rs.getString("login"), rs.getString("password"));
+					c=new Medecin((Integer)rs.getInt("id"), rs.getString("login"), rs.getString("password"), rs.getInt("salle"));
 				}
 				else if(rs.getString("type_compte").equals("Secretaire")) 
 				{
@@ -69,8 +69,6 @@ public class DAOCompte implements IDAO<Compte,Integer>{
 
 			PreparedStatement ps = conn.prepareStatement("INSERT INTO compte VALUES(?,?,?)", Statement.RETURN_GENERATED_KEYS);
 
-			// Est ce une bonne idée
-			//ps.setInt(1,0); 
 			ps.setString(1,c.getLogin());
 			ps.setString(2,c.getPassword());
 
@@ -83,16 +81,6 @@ public class DAOCompte implements IDAO<Compte,Integer>{
 		
 
 			ps.executeUpdate();
-
-			/*
-			ResultSet rs = ps.getGeneratedKeys();
-			if(rs.next()) {
-				c.setId(rs.getInt(1));
-			}
-			
-			rs.close();
-			*/
-			
 			ps.close();
 			conn.close();
 			
@@ -114,5 +102,40 @@ public class DAOCompte implements IDAO<Compte,Integer>{
 	}
 
 	
+	public static Compte seConnecter(String login, String password)
+    {
+        Compte connect=null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection conn = DriverManager.getConnection(urlBdd,loginBdd,passwordBdd);
+
+            PreparedStatement ps = conn.prepareStatement("SELECT * from compte where login=? and password=?");
+            ps.setString(1,login);
+            ps.setString(2, password);
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) 
+            {
+                if(rs.getString("type_compte").equals("Medecin")) 
+                {
+                    connect = new Medecin(rs.getInt("id"), rs.getString("login"),rs.getString("password"),rs.getInt("salle"));
+
+                }
+                else if(rs.getString("type_compte").equals("Secretaire"))
+                {
+                    connect = new Secretaire(rs.getInt("id"), rs.getString("login"),rs.getString("password"));
+                }
+                            }
+
+            rs.close();
+            ps.close();
+            conn.close();
+
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        return connect;
+
+    }
 	
 }
