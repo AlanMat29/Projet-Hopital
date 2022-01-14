@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Medecin;
 import model.Patient;
 import model.Visite;
 
@@ -19,6 +20,9 @@ public class DAOVisite implements IDAO<Visite, Integer>{
 
 
 		Visite v = null;
+		DAOPatient daoP = new DAOPatient();
+		DAOCompte daoC = new DAOCompte();
+		
 		try
 		{
 			Class.forName("com.mysql.jdbc.Driver");
@@ -30,7 +34,10 @@ public class DAOVisite implements IDAO<Visite, Integer>{
 
 			while (rs.next())
 			{
-				v = new Visite(rs.getInt("numero"), rs.getInt("id_patient"), rs.getInt("id_medecin"), rs.getInt("prix"), rs.getInt("salle"), LocalDate.parse(rs.getString("date_visite")));
+				Patient p = daoP.findById(rs.getInt("id_patient"));
+				Medecin m = (Medecin) daoC.findById(rs.getInt("id_medecin"));
+				
+				v = new Visite(rs.getInt("numero"), p, m);
 
 			}
 			
@@ -55,10 +62,11 @@ public class DAOVisite implements IDAO<Visite, Integer>{
 
 			PreparedStatement ps = conn.prepareStatement("INSERT INTO visite (numero, id_patient, id_medecin, prix, salle, date_visite) VALUES (?,?,?,?,?,?)");
 			ps.setInt(1, v.getNumero());
-			ps.setInt(2, v.getIdPatient());
-			ps.setInt(2, v.getPrix());
-			ps.setInt(2, v.getSalle());
-			ps.setString(2, v.getDateVisite().toString());
+			ps.setInt(2, v.getPatient().getId());
+			ps.setInt(3, v.getMedecin().getId());
+			ps.setInt(4, v.getPrix());
+			ps.setInt(5, v.getSalle());
+			ps.setString(6, v.getDateVisite().toString());
 
 			ps.executeUpdate();
 			ps.close();
@@ -97,6 +105,8 @@ public class DAOVisite implements IDAO<Visite, Integer>{
 
 		List<Visite> visites = new ArrayList();
 		Visite v =null;
+		DAOPatient daoP = new DAOPatient();
+		DAOCompte daoC = new DAOCompte();
 		try
 		{
 			Class.forName("com.mysql.jdbc.Driver");
@@ -108,7 +118,10 @@ public class DAOVisite implements IDAO<Visite, Integer>{
 
 			while (rs.next())
 			{
-				v = new Visite(rs.getInt("numero"), rs.getInt("id_patient"), rs.getInt("id_medecin"), rs.getInt("prix"), rs.getInt("salle"), LocalDate.parse(rs.getString("date_visite")));
+				Patient p = daoP.findById(rs.getInt("id_patient"));
+				Medecin m = (Medecin) daoC.findById(rs.getInt("id_medecin"));
+				
+				v = new Visite(rs.getInt("numero"), p, m);
 				visites.add(v);
 			}
 			
