@@ -1,5 +1,12 @@
 package test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -64,7 +71,7 @@ public class App {
 		}
 		menuUtilisateur();
 	}
-	
+
 	public static void connexion() {
 
 		System.out.println("Connexion");
@@ -76,7 +83,7 @@ public class App {
 		{
 			int salle = saisieInt("Choisir une salle (1/2)");
 			if (salle==1 ||salle==2) {
-			//int salle = saisieInt("Salle 1 ou 2 ?");
+				//int salle = saisieInt("Salle 1 ou 2 ?");
 				((Medecin) connected).setSalle(salle);
 				menuMedecin();
 			}
@@ -95,10 +102,10 @@ public class App {
 	public static void menuSecretaire() {
 
 		System.out.println("Menu secretaire");
-		System.out.println("1 - Ajouter un patient ï¿½ file d'attente");
+		System.out.println("1 - Ajouter un patient dans file d'attente");
 		System.out.println("2 - Afficher la file d'attente");
 		System.out.println("3 - Partir en pause");
-		System.out.println("4 - Partir en pause");
+		System.out.println("4 - Revenir de pause");
 		System.out.println("5 -Se deconnecter");
 
 		int choix = saisieInt("Choisir un menu");
@@ -107,7 +114,7 @@ public class App {
 		case 1 : ajouterPatient();break;
 		case 2 : showAllFile();break;
 		case 3 : partirEnPause();break;
-		case 4 : break;
+		case 4 : revenirDePause();break;
 		case 5 : connected=null; menuUtilisateur();break;
 		}
 		menuSecretaire();
@@ -115,35 +122,60 @@ public class App {
 
 
 	public static void partirEnPause() {
-		//Partir en pause = Serialize fileAttente dans fileAttente.txt
-		//fileAttente.clear();
-		
+
+		File pause = new File("fileAttente.txt");
+
+		try(FileOutputStream fos = new FileOutputStream(pause);
+				ObjectOutputStream oos = new ObjectOutputStream(fos);
+				) {
+
+			oos.writeObject(fileAttente); 
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+
+		fileAttente.clear();
 	}
 
-	
 
-	
+	public static void revenirDePause() {
+
+		File pause=new File("fileAttente.txt");
+		try(FileInputStream fis = new FileInputStream(pause);
+				ObjectInputStream ois = new ObjectInputStream(fis);)
+		{
+			fileAttente = (LinkedList<Patient>) ois.readObject(); 
+			
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+		} 
+
+	}
+
+
+
+
 	public static void ajouterPatient() {
 
 		int id = saisieInt("Saisir un identifiant");
 		Patient p = daoP.findById(id);	
-		
+
 		if (p==null) {
 			System.out.println("Id inconnu");
 			System.out.println("Veuillez vous enregistrer");
 			String nom = saisieString("Saisir nom");
 			String prenom = saisieString("Saisir prenom");
-			 p= new Patient(nom,prenom);
+			p= new Patient(nom,prenom);
 			daoP.insert(p);
 		}
-		
+
 		fileAttente.add(p);
 
 	}
-	
-	
 
-	
+
+
+
 	public static void showAllFile() {
 		for(Patient p : fileAttente)
 		{
@@ -152,8 +184,8 @@ public class App {
 	}
 
 
-	
-	
+
+
 	public static void menuMedecin() {
 
 		System.out.println("Menu Medecin");
@@ -162,7 +194,7 @@ public class App {
 		System.out.println("2 - Afficher la file d'attente");
 		System.out.println("3 - Sauvegarder mes visites");
 		System.out.println("4 - Se déconnecter");
-		
+
 		int choix = saisieInt("Choisir un menu");
 
 		switch(choix) 
@@ -171,30 +203,45 @@ public class App {
 		case 2 : showAllFile();break; //affiche list  <attente>(visite) , précision concernant le prochain patient
 		case 3 : insertVisite();break;
 		case 4 : connected=null;menuUtilisateur();break;
-			}
+		}
 
 		menuMedecin();
 
 	}
 
 	public static void insertVisite() {
-		//insert daoV les visites du medecin connecté
+		Medecin medecin = (Medecin) connected;
+		for(Visite v : medecin.getVisites())
+		{daoV.insert(v);}
+		medecin.getVisites().clear();
+		
 	}
 
-	
-	
+
+
 	public static void  recevoirPatient() {
+		Medecin medecin = (Medecin) connected;
+		Patient patient= fileAttente.poll();
+		System.out.println(patient);
+		Visite v = new Visite(patient,medecin);
+
+		medecin.getVisites().add(v);
+		
+		if (medecin.getVisites().size()>2) {
+			insertVisite();
+		}
+		
 		//Recup le 1er patient de la fileAttene;
 		//New Visite();
 		//add visite dans le medecin
 		//Si +10 visites insertVisite(); => visites.clear();
-		
+
 	}
 
 
-	
+
 	public static void main(String[] args) { 	
-		
+
 		menuUtilisateur();
 	} 
 }
