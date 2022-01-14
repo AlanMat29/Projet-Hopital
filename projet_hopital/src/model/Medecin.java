@@ -22,6 +22,14 @@ public class Medecin extends Compte{
 	public void setSalle(int salle) {
 		this.salle = salle;
 	}
+	
+	
+	public List<Visite> getVisites() {
+		return visites;
+	}
+	public void setVisites(List<Visite> visites) {
+		this.visites = visites;
+	}
 	@Override
 	public String toString() {
 		return "Medecin [salle=" + salle + ", id=" + id + ", login=" + login + ", password=" + password + "]";

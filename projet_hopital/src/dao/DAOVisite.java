@@ -37,8 +37,8 @@ public class DAOVisite implements IDAO<Visite, Integer>{
 				Patient p = daoP.findById(rs.getInt("id_patient"));
 				Medecin m = (Medecin) daoC.findById(rs.getInt("id_medecin"));
 				
-				v = new Visite(rs.getInt("numero"), p, m);
-
+				v = new Visite(p, m);
+				v.setNumero(id);
 			}
 			
 			rs.close();
@@ -121,7 +121,7 @@ public class DAOVisite implements IDAO<Visite, Integer>{
 				Patient p = daoP.findById(rs.getInt("id_patient"));
 				Medecin m = (Medecin) daoC.findById(rs.getInt("id_medecin"));
 				
-				v = new Visite(rs.getInt("numero"), p, m);
+				v = new Visite(p, m);
 				visites.add(v);
 			}
 			

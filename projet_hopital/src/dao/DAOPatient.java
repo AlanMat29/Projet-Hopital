@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import model.Patient;
@@ -50,11 +51,18 @@ public class DAOPatient implements IDAO<Patient, Integer> {
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection conn = DriverManager.getConnection(urlBdd, loginBdd, passwordBdd);
 
-			PreparedStatement ps = conn.prepareStatement("INSERT INTO patient (nom, prenom) VALUES (?,?)");
+			PreparedStatement ps = conn.prepareStatement("INSERT INTO patient (nom, prenom) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS);
 			ps.setString(1, p.getNom());
-			ps.setString(1, p.getPrenom());
+			ps.setString(2, p.getPrenom());
 
 			ps.executeUpdate();
+			
+			ResultSet rs = ps.getGeneratedKeys();
+			if(rs.next()) {
+				p.setId(rs.getInt(1));
+			}
+
+			
 			ps.close();
 			conn.close();
 

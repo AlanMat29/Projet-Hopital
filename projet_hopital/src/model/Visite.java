@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class Visite {
 
-	
+	 
 	private int numero;
 	private Patient patient;
 	private Medecin medecin;
@@ -12,8 +12,20 @@ public class Visite {
 	private int salle;
 	private LocalDate dateVisite;
 	
-	public Visite(int numero, Patient patient, Medecin medecin) {
+	
+	
+	
+	public Visite(int numero, Patient patient, Medecin medecin, int prix, int salle, LocalDate dateVisite) {
 		this.numero = numero;
+		this.patient = patient;
+		this.medecin = medecin;
+		this.prix = prix;
+		this.salle = salle;
+		this.dateVisite = dateVisite;
+	}
+
+
+	public Visite(Patient patient, Medecin medecin) {
 		this.patient = patient;
 		this.medecin = medecin;
 		this.prix = 20;
@@ -84,9 +96,12 @@ public class Visite {
 
 	@Override
 	public String toString() {
-		return "Visite [numero=" + numero + ", idPatient=" + idPatient + ", idMedecin=" + idMedecin + ", prix=" + prix
+		return "Visite [numero=" + numero + ", patient=" + patient + ", medecin=" + medecin + ", prix=" + prix
 				+ ", salle=" + salle + ", dateVisite=" + dateVisite + "]";
 	}
+
+
+	
 
 	
 }	
