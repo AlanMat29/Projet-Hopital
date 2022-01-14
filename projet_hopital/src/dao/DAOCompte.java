@@ -118,7 +118,7 @@ public class DAOCompte implements IDAO<Compte,Integer>{
             {
                 if(rs.getString("type_compte").equals("Medecin")) 
                 {
-                    connect = new Medecin(rs.getInt("id"), rs.getString("login"),rs.getString("password"),rs.getInt("salle"));
+                    connect = new Medecin(rs.getInt("id"), rs.getString("login"),rs.getString("password"));
 
                 }
                 else if(rs.getString("type_compte").equals("Secretaire"))
