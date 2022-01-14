@@ -6,15 +6,14 @@ public class Visite {
 
 	
 	private int numero;
-	private Integer idPatient;
-	private Integer idMedecin;
+	private Patient patient;
+	private Medecin medecin;
 	private int prix;
 	private int salle;
 	private LocalDate dateVisite;
 	
 	
 	public Visite(int numero, Integer idPatient, Integer idMedecin, int prix, int salle, LocalDate dateVisite) {
-		super();
 		this.numero = numero;
 		this.idPatient = idPatient;
 		this.idMedecin = idMedecin;
@@ -22,6 +21,16 @@ public class Visite {
 		this.salle = salle;
 		this.dateVisite = dateVisite;
 	}
+	
+	public Visite( Patient patient, Medecin medecin) {
+		this.numero = numero;
+		//this.idPatient = idPatient;
+		//this.idMedecin = idMedecin;
+		this.prix = 20;
+		this.salle = medecin.getSalle();
+		this.dateVisite = LocalDate.now();
+	}
+
 
 
 	public int getNumero() {
