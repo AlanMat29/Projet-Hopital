@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import model.Patient;
@@ -91,6 +92,37 @@ public class DAOVisite implements IDAO<Visite, Integer>{
 		
 	}
 
+	
+	public List<Visite> findAllByPatient(Integer id) {
+
+		List<Visite> visites = new ArrayList();
+		Visite v =null;
+		try
+		{
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection conn = DriverManager.getConnection(urlBdd, loginBdd, passwordBdd);
+
+			PreparedStatement ps = conn.prepareStatement("SELECT * from visite where id_patient=?");
+			ps.setInt(1,id);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next())
+			{
+				v = new Visite(rs.getInt("numero"), rs.getInt("id_patient"), rs.getInt("id_medecin"), rs.getInt("prix"), rs.getInt("salle"), LocalDate.parse(rs.getString("date_visite")));
+				visites.add(v);
+			}
+			
+			rs.close();
+			ps.close();
+			conn.close();
+
+
+		} catch (ClassNotFoundException | SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return visites;
+	}
 
 		
 
